@@ -6,14 +6,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.io.InputStream;
 
 public class Server {
 
 	public static void main(String[] Args) throws IOException, CodeException, ClassNotFoundException {
 
 		File file = new File("world.txt");
-		MyWoodLoader loader = new MyWoodLoader();
-		PrintableWood wood = (PrintableWood) loader.Load(new FileInputStream(file));
+		InputStream instream=new FileInputStream(file);
+ 		PrintableWoodLoader W=new PrintableWoodLoader();
+		PrintableWood wood=W.PrintableWoodLoad(instream,System.out);
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket serverSocket = null;
