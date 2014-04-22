@@ -7,8 +7,7 @@ public class Response implements Serializable {
 	private String m_response;
 
 	public Response(Action action) {
-		m_action = action;
-		m_response = "Action";		
+		m_action = action;	
 	}
 
 	public Action GetAction() {
@@ -18,5 +17,5 @@ public class Response implements Serializable {
 	public String GetResponse() {
 		return m_response;
 	}
-
+	
 }
