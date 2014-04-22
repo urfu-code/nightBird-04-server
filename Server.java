@@ -1,4 +1,3 @@
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,63 +7,49 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
-
+public class Server extends Close {
 	private static ObjectOutputStream out;
 	private static ObjectInputStream in;
 	private static ServerSocket serverSocket;
 	private static Socket socket;
 
-	public static void main(String[] Args) throws IOException, CodeException, ClassNotFoundException {
-
+	public static void main(String[] args) throws CodeException, IOException {
 		File file=new File("world.txt");
-		InputStream instream=new FileInputStream(file);
-		PrintableWoodLoader W=new PrintableWoodLoader();
-		PrintableWood wood=W.PrintableWoodLoad(instream,System.out);
+		InputStream instream = new FileInputStream(file);
+		PrintableWoodLoader W = new PrintableWoodLoader();
+		PrintableWood wood = W.PrintableWoodLoad(instream,System.out);
 		Request m_request;
 		Response m_response;	
 
+		System.out.println("Server started");
+		serverSocket = new ServerSocket(324);
+		socket = serverSocket.accept();
+		in = new ObjectInputStream(socket.getInputStream());
+		Action currentAction = Action.Ok;
+		String currentRequest;
+
 		try {
-			System.out.println("Server started");
-			serverSocket = new ServerSocket(12345);
-			socket = serverSocket.accept();
-			in = new ObjectInputStream(socket.getInputStream());
-			out = new ObjectOutputStream(socket.getOutputStream());
-			Action currentAction = Action.Ok;
-			String currentRequest;
-			System.out.println("Connection is established");
 
-			if ((currentAction == Action.WoodmanNotFound)) {
-				System.out.println("Woodman not found");
-				throw new CodeException("Woodman not found");
-			} 
-
-			if (currentAction == Action.Finish) {
-				System.out.println("You reached finish");
-			}
-
-			while ((currentAction != Action.Finish)&&(currentAction != Action.WoodmanNotFound)) {
-				m_request = (Request)in.readObject();
+			while((currentAction != Action.Finish) && (currentAction != Action.WoodmanNotFound)) {
+				m_request = (Request)((ObjectInputStream) in).readObject();
 				currentRequest=m_request.GetMethod();
 
 				switch (currentRequest) {
 
-				case "CreateWoodman" : {
+				case "CreateWoodman" :
 					wood.createWoodman(m_request.GetName(), m_request.GetStart(), m_request.GetFinish());
 					break;
-				}
 
-				case "MoveWoodman" : {
+				case "MoveWoodman" :
 					currentAction = wood.move(m_request.GetName(), m_request.GetDirection());
+					out = new ObjectOutputStream(socket.getOutputStream());
 					m_response = new Response(currentAction);
 					out.writeObject(m_response);
 					out.flush();
 					break;
 				}
-				}		
 			}
-			System.out.println(currentAction.toString());
-		}
+		} 
 		catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -76,15 +61,9 @@ public class Server {
 			tryClose(socket);
 			tryClose(out);
 			tryClose(in);
+			tryClose(instream);
 		}
 	}
 
-	private static void tryClose(Closeable closeable) {
-		try {
-			closeable.close();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	
 }
