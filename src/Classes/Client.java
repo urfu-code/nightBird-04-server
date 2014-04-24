@@ -1,3 +1,4 @@
+
 package Classes;
 
 import java.io.IOException;
@@ -6,7 +7,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
-import com.sun.corba.se.impl.orbutil.ObjectWriter;
 
 import Server.Request;
 import Server.Response;
@@ -18,10 +18,11 @@ public class Client {
 	public static void main(String[] args) throws IOException {
 		Socket socket = new Socket("localhost", 12345);
 		System.out.println("has connect");
+		
+		
+		ObjectOutputStream outStr = new ObjectOutputStream(socket.getOutputStream());
 		ObjectInputStream inpStr = new ObjectInputStream(socket.getInputStream());
 		System.out.println("maked streams");
-		ObjectOutputStream outStr = new ObjectOutputStream(socket.getOutputStream());
-		
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("ВВедите имя играока: ");
 		String name = scanner.nextLine();

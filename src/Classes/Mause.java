@@ -184,8 +184,8 @@ public class Mause implements Mouse {
 		}
 		if (goodLives.size() == 0)
 			return null;
-		for (int i=0; i< goodLives.size(); i++)
-			System.out.println(goodLives.get(i).toString() +" " + distances.get(goodLives.get(i)));
+		//for (int i=0; i< goodLives.size(); i++)
+			//System.out.println(goodLives.get(i).toString() +" " + distances.get(goodLives.get(i)));
 		//Выбираем из достижимых самую близкую
 		for (int i=0; i<goodLives.size(); i++) {
 			if (distances.get(goodLives.get(i)) < minDist) {

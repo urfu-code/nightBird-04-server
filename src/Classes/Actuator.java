@@ -40,12 +40,14 @@ public class Actuator {
 				x = inpStr.nextInt();
 				y = inpStr.nextInt();
 				finishs.add(new Point (x,y));
+				//
+				break;
 			}
 			
 			FileInputStream FIS = new FileInputStream(fileMap);
 			myWood = woodLoader.printableLoader(FIS, System.out);
 			
-			
+			System.out.println("wait client");
 			clientSession(sSocket.accept());
 		} catch (EmptyFileException e) {
 			// TODO Auto-generated catch block
@@ -70,12 +72,18 @@ public class Actuator {
 			outStr = new ObjectOutputStream(socket.getOutputStream());
 			try {
 				Request request = (Request)inStr.readObject();
-				Response response = new Response(Action.Ok);
 				Direction dir;
 				String name = request.getName();
 				
-				myWood.createWoodman(request.getName(), new Point(1,1), new Point(2,2));
+				if (starts.isEmpty() || finishs.isEmpty())
+					throw new RuntimeException("Не хватает точек старта или финиша");
+				Point finish = finishs.iterator().next();
+				Point start = starts.iterator().next();
+				myWood.createWoodman(request.getName(), start, finish);
 				Mause mause = new Mause();
+				
+				Response response = new Response(Action.Ok);
+				outStr.writeObject(response);
 				while (response.getAction() != Action.Finish && response.getAction() != Action.WoodmanNotFound) {
 					request = (Request) inStr.readObject();
 					dir = mause.NextMove(response.getAction());
