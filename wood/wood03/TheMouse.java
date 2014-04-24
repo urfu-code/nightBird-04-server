@@ -1,11 +1,11 @@
 package wood03;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
+
 
 import wood01.Action;
 import wood01.Direction;
@@ -24,6 +24,7 @@ public class TheMouse implements Mouse {
 	private boolean isCountedPath;
 	private int howManyLifesINeeded;
 	private Stack<Direction> pathToLife;
+	private Stack<Direction> pathFromLife;
 	
 	public TheMouse(String name) {
 		mouseName = name;
@@ -35,6 +36,7 @@ public class TheMouse implements Mouse {
 		needLifes = false;
 		isCountedPath = false;
 		pathToLife = new Stack<Direction>();
+		pathFromLife = new Stack<Direction>();
 	}
 	
 	@Override
@@ -53,7 +55,10 @@ public class TheMouse implements Mouse {
 		if (needLifes) {
 			direction = findLifes(action, mouseLocation, direction);
 		}
-		if ((action == Action.Life)&&(!needLifes)) {
+		else if (!pathFromLife.isEmpty()) {
+			direction = pathFromLife.pop();
+		}
+		else if ((action == Action.Life)&&(!needLifes)) {
 			if (mouseLifes < 4) {
 				needLifes = true;
 				lifePointCounter = 0;
@@ -104,14 +109,15 @@ public class TheMouse implements Mouse {
 	private Direction findLifes(Action action, Point location,Direction direction) throws Exception {
 		if (isCountedPath) {
 			if (mouseWorld.get(mouseLocation) != Action.Life) {
+				pathFromLife.push(invertDirection(pathToLife.peek()));
 				return pathToLife.pop();
 			}
 			else {
-				if (lifePointCounter > 2 + howManyLifesINeeded) {
+				if (lifePointCounter > 3 + howManyLifesINeeded) {
 					needLifes = false;
 					lifePointCounter = 0;
 					isCountedPath = false;
-					return invertDirection(pathToLife.pop());
+					return pathFromLife.pop();
 				}
 				else {
 					lifePointCounter++;
@@ -126,46 +132,55 @@ public class TheMouse implements Mouse {
 			searchLife.offer(mouseLocation);
 			boolean weHaveLife = false;
 			Point shamLocation = mouseLocation;
+			int shamLocationWeight = mouseLifes + 1;
 			Point tempLocation;
-			HashSet<Point> usedPoints = new HashSet<Point>();
+			HashMap<Point,Integer> usedPoints = new HashMap<Point,Integer>();
+			usedPoints.put(mouseLocation, shamLocationWeight);
 			while (!searchLife.isEmpty()) {
 				shamLocation = searchLife.poll();
-				if (!usedPoints.add(shamLocation)) {
-					continue;
-				}
+				shamLocationWeight = usedPoints.get(shamLocation);
 				if (mouseWorld.get(shamLocation) == Action.Life) {
-					weHaveLife = true;
-					break;
+					if (shamLocationWeight > 0) {
+						weHaveLife = true;
+						break;
+					}
 				}
 				else if (mouseWorld.get(shamLocation) == Action.Dead) {
-					tempCounter--;
+					shamLocationWeight--;
 					howManyLifesINeeded++;
+					if (shamLocationWeight < 0) {
+						continue;
+					}
 				}
 				//up
 				tempLocation = getShamLocation(shamLocation, Direction.Up);
-				if (mouseWorld.containsKey(tempLocation)) {
+				if (mouseWorld.containsKey(tempLocation) && !usedPoints.containsKey(tempLocation)) {
 					if (mouseWorld.get(tempLocation) != Action.Fail) {
+						usedPoints.put(tempLocation, shamLocationWeight);
 						searchLife.offer(tempLocation);
 					}
 				}
 				//left
 				tempLocation = getShamLocation(shamLocation, Direction.Left);
-				if (mouseWorld.containsKey(tempLocation)) {
+				if (mouseWorld.containsKey(tempLocation) && !usedPoints.containsKey(tempLocation)) {
 					if (mouseWorld.get(tempLocation) != Action.Fail) {
+						usedPoints.put(tempLocation, shamLocationWeight);
 						searchLife.offer(tempLocation);
 					}
 				}
 				//down
 				tempLocation = getShamLocation(shamLocation, Direction.Down);
-				if (mouseWorld.containsKey(tempLocation)) {
+				if (mouseWorld.containsKey(tempLocation) && !usedPoints.containsKey(tempLocation)) {
 					if (mouseWorld.get(tempLocation) != Action.Fail) {
+						usedPoints.put(tempLocation, shamLocationWeight);
 						searchLife.offer(tempLocation);
 					}
 				}
 				//right
 				tempLocation = getShamLocation(shamLocation, Direction.Right);
-				if (mouseWorld.containsKey(tempLocation)) {
+				if (mouseWorld.containsKey(tempLocation) && !usedPoints.containsKey(tempLocation)) {
 					if (mouseWorld.get(tempLocation) != Action.Fail) {
+						usedPoints.put(tempLocation, shamLocationWeight);	
 						searchLife.offer(tempLocation);
 					}
 				}
@@ -178,6 +193,7 @@ public class TheMouse implements Mouse {
 			else {
 				isCountedPath = true;
 				writePath(shamLocation);
+				pathFromLife.push(invertDirection(pathToLife.peek()));
 				return pathToLife.pop();
 			}
 		}
@@ -217,6 +233,7 @@ public class TheMouse implements Mouse {
 		else {
 			pathToLife.push(Direction.Left);
 		}
+		location = tempPoint;
 		while (!location.equals(mouseLocation)) {
 			tempPoint = location.getParrent();
 			//up

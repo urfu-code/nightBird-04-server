@@ -128,7 +128,7 @@ public class PrintableTheWood extends TheWood {
 		Action currentAction;
 		currentAction = super.move(name, direction);
 		this.printWood(stream);
-		if (currentAction == Action.WoodmanNotFound) {
+		if (currentAction == Action.WoodmanNotFound || currentAction == Action.ExitFound) {
 			char tempName = woodmanNames.remove(name);
 			for (int i = 0; i < nameList.length; i++) {
 				if (nameList[i] == 'N') {
@@ -136,6 +136,7 @@ public class PrintableTheWood extends TheWood {
 				}
 			}
 		}
+
 		return currentAction;
 	}
 	

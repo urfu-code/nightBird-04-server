@@ -111,6 +111,7 @@ public class TheWood implements Wood {
 					currentAction = Action.Fail;
 				}
 				else {
+					woodmans.remove(name);
 					currentAction = Action.WoodmanNotFound;
 				}
 			}
@@ -120,6 +121,7 @@ public class TheWood implements Wood {
 			}
 		}
 		if (woodmansFinish.get(currentWoodman.GetName()).equals(newPosition)) {
+			woodmans.remove(name);	
 			return Action.ExitFound;
 		}
 		return currentAction;

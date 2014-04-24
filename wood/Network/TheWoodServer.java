@@ -3,12 +3,10 @@ package Network;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.ArrayList;
 
-import wood01.Action;
+import wood01.Point;
 import wood01.PrintableTheWood;
 import wood01.TheWoodLoader;
 
@@ -16,41 +14,32 @@ public class TheWoodServer {
 	
 	public static void main(String[] Args) {
 		ServerSocket server = null;
-		Socket fromClient = null;
-		ObjectOutputStream objectWriter = null;
-		ObjectInputStream objectReader = null;
-		MouseRequest request;
-		WoodResponse response;
-		File file = new File("wood\\wood03\\wood.txt");
+		Thread thread;
+		File file = new File("wood.txt");
+		ArrayList<Point>startEndPoints = new ArrayList<Point>();
 		TheWoodLoader loader = new TheWoodLoader();
+		startEndPoints.add(new Point(11,6));
+		startEndPoints.add(new Point(1,1));
+		startEndPoints.add(new Point(11,1));
+		startEndPoints.add(new Point(1,6));
+		startEndPoints.add(new Point(7,4));
+		startEndPoints.add(new Point(7,5));
 		try {
 			server = new ServerSocket(6789);
 			System.out.println("Server started!");
 			try {
 				PrintableTheWood wood = (PrintableTheWood) loader.Load(new FileInputStream(file),System.out);
 				System.out.println("Waiting for connection...");
-				fromClient = server.accept();
-				System.out.println("Client connected!");
-				objectReader = new ObjectInputStream(fromClient.getInputStream());
-				objectWriter = new ObjectOutputStream(fromClient.getOutputStream());
-				Action currentAction = Action.Ok;
+				ArrayList<Thread> clients = new ArrayList<Thread>();
+				TheWoodServerThreadSyncronizer sync = new TheWoodServerThreadSyncronizer(clients);
+				thread = new Thread(sync);
+				thread.start();
 				while (true) {
-					if ((currentAction == Action.WoodmanNotFound)||(currentAction == Action.ExitFound)) {
-						break;
-					}
-					request = (MouseRequest) objectReader.readObject();
-					if (request.getRequestType().equals("create")) {
-						// нужно описать исключение, которое поймёт что вудман не создан
-						wood.createWoodman(request.getName(), request.getStartPoint(), request.getFinishPoint());
-					}
-					else if (request.getRequestType().equals("move")) {
-						currentAction = wood.move(request.getName(), request.getDirection());
-					}
-					response = new WoodResponse(currentAction);
-					objectWriter.writeObject(response);
-					objectWriter.flush();
+					thread = new Thread(new TheWoodServerThread(server.accept(), wood, startEndPoints, sync));
+					clients.add(thread);
+					thread.start();
+					System.out.println(clients.size() + " clients connected!");
 				}
-				System.out.println(currentAction.toString());
 			}
 			catch (ClassNotFoundException e) {
 				System.out.println("тестовая беда");
@@ -61,20 +50,10 @@ public class TheWoodServer {
 			}
 			catch (Exception e) {
 				System.out.println("беда с лесом");
-				objectWriter.writeObject(new WoodResponse("woodError"));
 			}
 			finally {
-				if(objectWriter != null) {
-					objectWriter.close();
-				}
 				if (server != null) {
 					server.close();
-				}
-				if (fromClient != null) {
-					fromClient.close();
-				}
-				if (objectReader != null) {
-					objectReader.close();
 				}
 			}
 		}

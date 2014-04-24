@@ -32,7 +32,7 @@ public class TestPrintableTheWood {
 
 	@Test
 	public void testCreateWoodman() throws Exception {
-		testWood.createWoodman("kolya", new Point(1,1), new Point(5,5));
+		testWood.createWoodman("kolya", new Point(1,1), new Point(4,4));
 		String test2String = 
 		"┌──┬─┐\n" +
 		"│α │♥│\n" +
@@ -65,7 +65,7 @@ public class TestPrintableTheWood {
 		"ѻ - trap\n" +
 		"------------\n" +
 		"kolya (α) - 3 live(s)\n";
-		testWood.createWoodman("kolya", new Point(1,1), new Point(5,5));
+		testWood.createWoodman("kolya", new Point(1,1), new Point(4,4));
 		testOutput.reset();
 		testWood.move("kolya", Direction.Down);
 		assertEquals(test3String, testOutput.toString());

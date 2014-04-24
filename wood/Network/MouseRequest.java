@@ -9,11 +9,14 @@ public class MouseRequest implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private String requestType;
+	@Deprecated
 	private Point startPoint;
+	@Deprecated
 	private Point finishPoint;
 	private String mouseName;
 	private Direction direction;
 	
+	@Deprecated
 	public MouseRequest(String name,Point start, Point finish) {
 		requestType = "create";
 		startPoint = start;
@@ -21,6 +24,10 @@ public class MouseRequest implements Serializable {
 		mouseName = name;
 	}
 	
+	public MouseRequest(String name) {
+		mouseName = name;
+		requestType = "create";
+	}
 	public MouseRequest(String name, Direction direction) {
 		requestType = "move";
 		this.direction = direction;
@@ -31,10 +38,12 @@ public class MouseRequest implements Serializable {
 		return requestType;
 	}
 	
+	@Deprecated
 	public Point getStartPoint() {
 		return startPoint;
 	}
 	
+	@Deprecated
 	public Point getFinishPoint() {
 		return finishPoint;
 	}
