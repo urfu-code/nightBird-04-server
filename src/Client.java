@@ -15,6 +15,7 @@ public class Client {
 			MyMouse mouse = new MyMouse();	
 			socket = new Socket("localhost", 12345);
 			out_stream = new ObjectOutputStream(socket.getOutputStream());
+			in_stream = new ObjectInputStream(socket.getInputStream());
 			
 			MessageServer messageServer = new MessageServer("createWoodman", name);
 			out_stream.writeObject(messageServer);
@@ -35,7 +36,6 @@ public class Client {
 				MessageServer message = new MessageServer("move", name, direction);
 				out_stream.writeObject(message);
 				out_stream.flush();
-				in_stream = new ObjectInputStream(socket.getInputStream());
 				MessageClient messageClient = (MessageClient) in_stream.readObject();
 				action = messageClient.getAction();
 			}

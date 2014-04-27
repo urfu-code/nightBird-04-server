@@ -26,6 +26,7 @@ public class Server {
 			MyWoodLoader loder = new MyWoodLoader();
 			PrintableWood wood = loder.Load(stream, System.out);
 			in_stream = new ObjectInputStream(socket.getInputStream());
+			out_stream = new ObjectOutputStream(socket.getOutputStream());
 			
 			Point point_start = new Point(1,1);
 			Point point_finish = new Point(6,2);
@@ -40,7 +41,6 @@ public class Server {
 							break;
 						case "move" :
 							action = wood.move(messageServer.getName(), messageServer.getDirection());
-							out_stream = new ObjectOutputStream(socket.getOutputStream());
 							MessageClient messageClient = new MessageClient(action);
 							out_stream.writeObject(messageClient);
 							out_stream.flush();
