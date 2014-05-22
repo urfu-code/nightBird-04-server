@@ -21,10 +21,13 @@ public class Server {
 			try {
 				while (true) {
 					MessageClient newMessageClient = (MessageClient) ois.readObject();
-					if (newMessageClient.getTask() == "create") {
-						pw.createWoodman(newMessageClient.getName(), new Point (1, 1), new Point (8, 6));
+					if (newMessageClient.getTask().equals("create")) {
+						pw.createWoodman(newMessageClient.getName(), new Point (3, 3), new Point (8, 6));
+						MessageServer newMessageServer = new MessageServer(Action.Ok);
+						oos.writeObject(newMessageServer);
+						oos.flush();
 					}
-					if (newMessageClient.getTask() == "move") {
+					if (newMessageClient.getTask().equals("move")) {
 						Action action = pw.move(newMessageClient.getName(), newMessageClient.getDirection());
 						MessageServer newMessageServer = new MessageServer(action);
 						oos.writeObject(newMessageServer);
@@ -44,7 +47,6 @@ public class Server {
 			} finally {
 				close(serverSocket);
 				close(socket);
-				close(ois);
 				close(oos);
 			}
 		} catch (IOException e) {

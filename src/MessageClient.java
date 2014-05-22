@@ -1,7 +1,7 @@
 import java.io.Serializable;
 
 public class MessageClient implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3529679846350670758L;
 	private String m_name;
 	private String m_task;
 	private Direction m_direction;

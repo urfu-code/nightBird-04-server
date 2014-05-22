@@ -4,7 +4,7 @@ public class Actuator {
 		MyWoodLoader loader = new MyWoodLoader();
 		try {
 			PrintableWood pw = (PrintableWood) loader.prWood(System.out);
-			pw.createWoodman("venera", new Point (1, 1), new Point (8, 6));
+			pw.createWoodman("venera", new Point (3, 3), new Point (8, 6));
 			MyMouse mouse = new MyMouse();
 			Action action = Action.Ok;
 			while (true) {

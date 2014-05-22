@@ -14,11 +14,11 @@ public class Client {
 		try {
 			Socket socket = new Socket("localhost", 9874);
 			MyMouse mouse = new MyMouse();
-			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			MessageClient newMessageClient = new MessageClient(name, "create");
 			oos.writeObject(newMessageClient);
 			oos.flush();
+			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			Action action = Action.Ok;
 			try {
 				while (true) {
@@ -36,7 +36,6 @@ public class Client {
 				e.printStackTrace();
 			} finally {
 				close(socket);
-				close(ois);
 				close(oos);
 			}
 		} catch (UnknownHostException e) {
