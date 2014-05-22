@@ -37,6 +37,7 @@ public class Client {
 			} finally {
 				close(socket);
 				close(oos);
+				close(ois);
 			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
