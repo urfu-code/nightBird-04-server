@@ -2,7 +2,6 @@ package defpac;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,14 +15,6 @@ public class WoodServer {
 	private static ObjectInputStream reader;
 	private static ObjectOutputStream writer;
 	
-	private static void tryClose(Closeable closeable) {
-		try {
-			closeable.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static void main (String[] args) throws IOException, ClassNotFoundException {
 		try {
 			ServerSocket serverSocket = new ServerSocket(4000);
@@ -56,14 +47,20 @@ public class WoodServer {
 				}
 			} finally {
 				System.out.println("Oops, something got wrong...\n"+System.getProperty("line.separator"));
-				tryClose(writer);
-				tryClose(reader);
-				tryClose(socket);
-				tryClose(serverSocket);
+				Destroyter d = new Destroyter();
+				d.close(writer);
+				d.close(reader);
+				d.close(socket);
+				d.close(serverSocket);
+				//tryClose(writer);
+				//tryClose(reader);
+				//tryClose(socket);
+				//tryClose(serverSocket);
 			}	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		System.out.println("Goodbye!\n"+System.getProperty("line.separator"));
 	}
+	
 }
