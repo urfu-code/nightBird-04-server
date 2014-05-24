@@ -9,18 +9,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyPrintableWood extends MyWood {
-	private OutputStream output;
+	//private OutputStream output;
+	private PrintWriter out;
 
 	public MyPrintableWood(char[][] m_wood, OutputStream output) {
 		super(m_wood);
-		this.output = output;
+		//this.output = output;
+		out = new PrintWriter(
+				new OutputStreamWriter(
+				new BufferedOutputStream(output)));
 	}
 
 	public void printWood() throws IOException {
-		PrintWriter out = new PrintWriter(
-				new OutputStreamWriter(
-				new BufferedOutputStream(output)));
-		try {
+//		PrintWriter out = new PrintWriter(
+//				new OutputStreamWriter(
+//				new BufferedOutputStream(output)));
+		//try {
 			Map<String, String> code = new HashMap<String, String>();
 			String symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 			boolean[] emptySymbol = new boolean[symbols.length()];
@@ -99,9 +103,9 @@ public class MyPrintableWood extends MyWood {
 					Idx++;
 				emptySymbol[Idx] = false;
 			}
-		} finally {
-			out.close();
-		}
+		//} finally {
+			//out.close();
+		//}
 	}
 
 	@Override
