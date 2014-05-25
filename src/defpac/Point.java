@@ -1,4 +1,4 @@
-package defpac;
+
 
 public class Point {
 	private final int x;

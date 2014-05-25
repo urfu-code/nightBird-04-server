@@ -1,4 +1,4 @@
-package defpac;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,6 +12,7 @@ public class MyPrintableWoodTest extends TestCase {
 		char[][] wood = {{'1','1','1','1'},{'1','0','K','1'},{'1','0','L','1'},{'1','1','1','1'}};
 		MyPrintableWood forest = new MyPrintableWood (wood, out);
 		forest.createWoodman("aaa", new Point(1,1), new Point(2,1));
+		forest.createWoodman("abc", new Point(1,1), new Point(2,1));
 		assertEquals(forest.move("aaa",Direction.None),Action.Ok);
 		forest.printWood();
 	}
@@ -21,6 +22,8 @@ public class MyPrintableWoodTest extends TestCase {
 		char[][] forest = {{'1','1','1','1'},{'1','0','K','1'},{'1','0','L','1'},{'1','0','1','1'},{'1','1','1','1'}};
 		MyPrintableWood wood = new MyPrintableWood (forest, out);
 		wood.createWoodman("aaa", new Point(1,1), new Point(1,3));
+		wood.createWoodman("myash", new Point(1,1), new Point(1,3));
+		wood.createWoodman("sasyash", new Point(1,1), new Point(1,3));
 		wood.createWoodman("losyash", new Point(1,3), new Point(1,2));
 		assertEquals(wood.move("aaa",Direction.Down),Action.Ok);
 		assertEquals(wood.move("aaa",Direction.Right),Action.Life);
@@ -42,7 +45,6 @@ public class MyPrintableWoodTest extends TestCase {
 		assertEquals(wood.move("nyash",Direction.Right),Action.Fail);
 		assertEquals(wood.move("nyash",Direction.Right),Action.Fail);
 		assertEquals(wood.move("nyash",Direction.Right),Action.Fail);
-		wood.createWoodman("myash", new Point(1,1), new Point(1,3));		
 	}
 
 	public void testPrintWood() throws IOException {
